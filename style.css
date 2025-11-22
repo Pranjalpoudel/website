@@ -15,7 +15,7 @@
 
 .light-mode {
     /* Light Mode Overrides */
-    --bg-color: #f0f2f5;
+    --bg-color: #f0f2f5a3;
     --text-color: #1a1a1a;
     --text-muted: #555555;
     --primary-color: #0066cc;
@@ -77,6 +77,7 @@ body {
     transition: color 0.3s;
 }
 
+/* Neon Effect  on the navigation button*/
 .nav-links li a::after {
     content: '';
     position: absolute;
@@ -384,7 +385,7 @@ footer i {
     transform: translateY(0);
 }
 
-/* Responsive */
+/* Mobile Responsive Layout */
 @media (max-width: 768px) {
     .navbar {
         padding: 1rem 5%;
