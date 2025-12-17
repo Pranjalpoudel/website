@@ -271,27 +271,48 @@ if (counterElement) {
     counterElement.innerText = displayedCount;
 }
 
-// Contact Form Logic (Simulated Database)
+// Firebase Imports
+import { db, collection, addDoc } from './firebase-config.js';
+
+console.log("implement.js loaded - Firebase Config imported");
+
+// Contact Form Logic
 const contactForm = document.querySelector('.contact-form');
 if (contactForm) {
-    contactForm.addEventListener('submit', (e) => {
+    console.log("Contact form found");
+    contactForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+        console.log("Form submitted");
 
         const name = document.getElementById('name').value;
         const email = document.getElementById('email').value;
         const message = document.getElementById('message').value;
         const date = new Date().toLocaleString();
 
-        const newMessage = { name, email, message, date };
-
-        // Get existing messages or initialize empty array
-        const messages = JSON.parse(localStorage.getItem('messages')) || [];
-        messages.push(newMessage);
-
-        // Save back to local storage
-        localStorage.setItem('messages', JSON.stringify(messages));
-
-        alert('Message Sent! (Saved to Local Mock Database)');
-        contactForm.reset();
+        try {
+            console.log("Attempting to add document to Firestore...");
+            const messagesCol = collection(db, 'messages');
+            await addDoc(messagesCol, {
+                name: name,
+                email: email,
+                message: message,
+                date: date,
+                timestamp: new Date()
+            });
+            console.log("Document written with ID");
+            alert('Message Sent Successfully!');
+            contactForm.reset();
+        } catch (error) {
+            console.error("Error adding document: ", error);
+            if (error.message.includes("permission-denied")) {
+                alert("Error: Database Permission Denied.\n\nDid you create the Firestore Database in the Console?\nDid you set the rules to 'Test Mode'?");
+            } else if (error.message.includes("API has not been used")) {
+                alert("Error: Firestore API Disabled.\n\nPlease enable it in the Google Cloud Console (Link in Debug Walkthrough).");
+            } else {
+                alert('Error sending message: ' + error.message);
+            }
+        }
     });
+} else {
+    console.error("Contact form NOT found in DOM");
 }
