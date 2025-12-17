@@ -306,7 +306,63 @@
     </style>
 </head>
 
+<style>
+    /* Login Overlay */
+    #login-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        z-index: 9999;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+
+    .login-box {
+        background: var(--card-bg);
+        padding: 3rem;
+        border-radius: 20px;
+        text-align: center;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+
+    .login-input {
+        padding: 10px;
+        border-radius: 5px;
+        border: none;
+        margin-top: 1rem;
+        width: 200px;
+    }
+
+    .login-btn {
+        padding: 10px 20px;
+        background: var(--primary-color);
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 1rem;
+        font-weight: bold;
+    }
+</style>
+</head>
+
 <body>
+    <div id="login-overlay">
+        <div class="login-box">
+            <h2 style="color:white; margin-bottom:1rem;"><i class="fas fa-lock"></i> Admin Access</h2>
+            <p style="color:grey;">Enter password to view dashboard</p>
+            <input type="password" id="password-input" class="login-input" placeholder="Password">
+            <br>
+            <button class="login-btn" onclick="checkPassword()">Unlock</button>
+            <p id="login-error" style="color: #ff6b6b; margin-top: 10px; display: none;">Incorrect Password</p>
+        </div>
+    </div>
 
     <!-- Sidebar -->
     <aside class="sidebar">
@@ -568,7 +624,31 @@
         }
 
         // Initialize
-        window.addEventListener('DOMContentLoaded', window.loadDashboardData);
+        window.addEventListener('DOMContentLoaded', () => {
+            if (sessionStorage.getItem('isLoggedIn') === 'true') {
+                document.getElementById('login-overlay').style.display = 'none';
+                window.loadDashboardData();
+            }
+        });
+
+        // Login Logic
+        window.checkPassword = function () {
+            const input = document.getElementById('password-input').value;
+            if (input === 'admin123') { // Default Password
+                sessionStorage.setItem('isLoggedIn', 'true');
+                document.getElementById('login-overlay').style.display = 'none';
+                window.loadDashboardData();
+            } else {
+                document.getElementById('login-error').style.display = 'block';
+            }
+        };
+
+        // Allow Enter key to submit
+        document.getElementById('password-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                window.checkPassword();
+            }
+        });
 
         // Expose simulateMessage (even though purely alert now) to avoid errors if clicked
         window.simulateMessage = function () {
