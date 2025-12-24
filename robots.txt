@@ -1,5 +1,5 @@
 # This file is optimized for pranjalpoudel.com.np
-User-agent: *
+User-agent: 
 Disallow: /admin/
 Disallow: /private/
 Disallow: /backup/
