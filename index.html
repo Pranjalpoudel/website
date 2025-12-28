@@ -245,7 +245,9 @@
                         <input type="text" id="name" placeholder="Your Name" required>
                     </div>
                     <div class="form-group">
-                        <input type="email" id="email" placeholder="Your Email" required>
+                        <input type="email" id="email" placeholder="Your Email"
+                            pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$"
+                            title="Please enter a valid email address (e.g., user@example.com)" required>
                     </div>
                     <div class="form-group">
                         <textarea id="message" rows="5" placeholder="Your Message" required></textarea>
