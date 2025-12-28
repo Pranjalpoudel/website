@@ -300,10 +300,20 @@ if (contactForm) {
                 timestamp: new Date()
             });
             console.log("Document written with ID");
+
+            // Send Email Notification
+            console.log("Attempting to send email via EmailJS...");
+            await emailjs.send('service_cqxkf16', 'template_into7hk', {
+                from_name: name,
+                from_email: email,
+                message: message
+            });
+            console.log("Email sent successfully");
+
             alert('Message Sent Successfully!');
             contactForm.reset();
         } catch (error) {
-            console.error("Error adding document: ", error);
+            console.error("Error adding document or sending email: ", error);
             if (error.message.includes("permission-denied")) {
                 alert("Error: Database Permission Denied.\n\nDid you create the Firestore Database in the Console?\nDid you set the rules to 'Test Mode'?");
             } else if (error.message.includes("API has not been used")) {
