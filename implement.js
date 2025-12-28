@@ -282,6 +282,33 @@ if (contactForm) {
     console.log("Contact form found");
     contactForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+
+        // 1. Rate Limiting Check
+        const RATE_LIMIT_KEY = 'contact_form_timestamps';
+        const MAX_MESSAGES = 3;
+        const TIME_WINDOW = 60000; // 1 minute in milliseconds
+
+        let timestamps = JSON.parse(localStorage.getItem(RATE_LIMIT_KEY) || '[]');
+        const now = Date.now();
+
+        // Filter out timestamps older than the window
+        timestamps = timestamps.filter(ts => now - ts < TIME_WINDOW);
+
+        if (timestamps.length >= MAX_MESSAGES) {
+            alert("You are sending messages too fast! Please wait a minute before trying again.");
+            return;
+        }
+
+        // Add current timestamp and save
+        timestamps.push(now);
+        localStorage.setItem(RATE_LIMIT_KEY, JSON.stringify(timestamps));
+
+        // 2. UI Feedback - Start Loading
+        const submitBtn = contactForm.querySelector('button[type="submit"]');
+        const originalBtnText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+        submitBtn.disabled = true;
+
         console.log("Form submitted");
 
         const name = document.getElementById('name').value;
@@ -289,7 +316,10 @@ if (contactForm) {
         const message = document.getElementById('message').value;
         const date = new Date().toLocaleString();
 
+        let errors = [];
+
         try {
+            // 3. Database Operation
             console.log("Attempting to add document to Firestore...");
             const messagesCol = collection(db, 'messages');
             await addDoc(messagesCol, {
@@ -299,9 +329,9 @@ if (contactForm) {
                 date: date,
                 timestamp: new Date()
             });
-            console.log("Document written with ID");
+            console.log("Document written to Firebase");
 
-            // Send Email Notification
+            // 4. Email Operation
             console.log("Attempting to send email via EmailJS...");
             await emailjs.send('service_cqxkf16', 'template_into7hk', {
                 from_name: name,
@@ -310,17 +340,23 @@ if (contactForm) {
             });
             console.log("Email sent successfully");
 
+            // Success!!
             alert('Message Sent Successfully!');
             contactForm.reset();
+
         } catch (error) {
             console.error("Error adding document or sending email: ", error);
-            if (error.message.includes("permission-denied")) {
+            if (error.message && error.message.includes("permission-denied")) {
                 alert("Error: Database Permission Denied.\n\nDid you create the Firestore Database in the Console?\nDid you set the rules to 'Test Mode'?");
-            } else if (error.message.includes("API has not been used")) {
-                alert("Error: Firestore API Disabled.\n\nPlease enable it in the Google Cloud Console (Link in Debug Walkthrough).");
+            } else if (error.message && error.message.includes("API has not been used")) {
+                alert("Error: Firestore API Disabled.\n\nPlease enable it in the Google Cloud Console.");
             } else {
-                alert('Error sending message: ' + error.message);
+                alert('Error sending message: ' + (error.text || error.message || error));
             }
+        } finally {
+            // Restore UI
+            submitBtn.innerHTML = originalBtnText;
+            submitBtn.disabled = false;
         }
     });
 } else {
