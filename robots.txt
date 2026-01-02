@@ -1,13 +1,12 @@
 # This file is optimized for pranjalpoudel.com.np
-User-agent: 
-Disallow: /admin/
-Disallow: /private/
-Disallow: /backup/
+User-agent: *
+
+# Hide your dashboard page
+Disallow: /dashboard.html
 
 # Ensure Google can see your favicon and images
 Allow: /favicon.png
-Allow: /assets/
-Allow: /images/
+Allow: /pic.jpg
 
 # Point Google to your sitemap
 Sitemap: https://pranjalpoudel.com.np/sitemap.xml
