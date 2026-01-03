@@ -1,0 +1,22 @@
+# Pranjal Poudel - Portfolio Website
+
+## Overview
+This is the personal portfolio website of Pranjal Poudel, an Electronic Engineer and Web Developer. It showcases his skills, education, projects, and contact information.
+
+## Tech Stack
+- **Frontend**: HTML5, CSS3, JavaScript (Vanilla ES6+)
+- **Hosting**: GitHub Pages
+- **Integrations**: EmailJS (Contact Form), Google Analytics
+- **Design logic**: Single Page Application (SPA) feel with smooth scrolling anchors.
+
+## Key Sections
+- **Home**: Hero section with introduction.
+- **About**: Professional summary and background.
+- **Education**: Timeline of academic journey.
+- **Skills**: Grid of technical skills (Hardware & Software).
+- **Hobbies**: Personal interests.
+- **Contact**: Functional contact form and social links.
+
+## Contact
+- **Email**: pranjalpaudel62@gmail.com
+- **GitHub**: https://github.com/Pranjalpoudel
